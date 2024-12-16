@@ -20,11 +20,11 @@ y_j0 = sparse(Line(:,2),Line(:,1),Ga2+1i.*(Line(:,5)+Ba2),n,n);%对地导纳y_j0
 % 计算 U_ij
 U_diag = diag(U1); % 提取 U1 的对角线元素
 U1_conj = conj(U1); %计算U1的共轭
-U_ij = U_diag * ones(n, n) - ones(n, n) * U_diag; % 计算 U_ij
+U_ij = sparse(U_diag * ones(n, n) - ones(n, n) * U_diag); % 计算 U_ij
 
 % 计算 S_ij
-S_ij = U_diag * conj(y_ij) .* conj(U_ij); % 计算S_ij的第一部分
-S_ij = S_ij + U_diag * (repmat(U1_conj, 1, n) .* conj(y_i0)); % 计算 S_ij 的第二部分
-S_ij = S_ij + U_diag * (repmat(U1_conj, 1, n) .* conj(y_j0)); % 计算 S_ij 的第三部分
+S_ij = (U_diag * conj(y_ij) .* conj(U_ij)) .* SB; % 计算S_ij的第一部分
+S_ij = S_ij + U_diag * (repmat(U1_conj, 1, n) .* conj(y_i0)) .* SB; % 计算 S_ij 的第二部分
+S_ij = S_ij + U_diag * (repmat(U1_conj, 1, n) .* conj(y_j0)) .* SB; % 计算 S_ij 的第三部分
 
 S_ij = sparse(S_ij);%将 S_ij 转换为稀疏矩阵

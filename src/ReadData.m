@@ -11,8 +11,8 @@ SB=mpc.baseMVA;
 %% 获取母线数据
 Node = sparse(mpc.bus);    
 
-%% 获取节点数据，各类节点数量，便于计算分配堆栈
-NodeNumber = size(mpc.bus,1);     
+%% 获取节点数据
+NodeNumber = size(mpc.bus,1);%获取母线数据矩阵的行数，即节点数    
 PVNumber = sum(Node(:, 2) == 2); %PV节点数(计算Node中第2列等于2的元素数量，即PV节点的数量)
 PQNumber = sum(Node(:, 2) == 1); %PQ节点数(计算Node中第2列等于1的元素数量，即PV节点的数量)
 

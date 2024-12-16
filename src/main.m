@@ -4,6 +4,7 @@
 
 %% 0.计算参数准备(算例选择)
 clc;clear;
+format longG;
 [file, path] = uigetfile('*.*', '选择一个数据文件');
 if isequal(file, 0)
     disp('取消了文件选择');
@@ -22,20 +23,19 @@ else
     end
 end
 
-% 使用 inputdlg 函数创建输入对话框
+%使用 inputdlg 函数创建输入对话框
 Prompt = {'允许最大迭代次数:', '目标迭代精度:'};
 DialogTitle = '输入参数';
 DPI = [1 10];
 DefaultInput = {'20', '1e-10'};
 Answer = inputdlg(Prompt, DialogTitle, DPI, DefaultInput);
 
-% 将用户输入转换为数值
+%将输入转换为数值
 k_max = uint32(str2double(Answer{1}));
 Tolrance = str2double(Answer{2});
 
-tic;%运行计时开始
-
 %% 1.读取数据
+tic;%运行计时开始
 [SB,NodeNumbers,Line,Node,Gen,g,b,Balance,PVdata,PQdata] = ReadData(mpc);
 
 %% 2.形成导纳矩阵
@@ -94,10 +94,10 @@ TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
 
  %输出
  disp('节点电压幅值       节点电压角度');disp(volts);
- disp('平衡节点功率');disp(slack_power); 
  disp('线路功率');disp(trans_powers);
  disp('线路损耗');disp(S_lose);
  disp(['计算的节点数为：',num2str(NodeNumbers),'个']);
  disp(['潮流迭代的次数为：',num2str(k),'次']);
  disp(TimeMessage);
+ disp('平衡节点功率');disp(slack_power); 
  disp(['最大不平衡量为:',num2str(MaxUnbalance)]);
