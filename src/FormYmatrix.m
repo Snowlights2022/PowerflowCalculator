@@ -23,19 +23,19 @@ Ba2 =  Bij.*(Line(:,9)-1)./Line(:,9);
 
 %% 计算电导矩阵
 G = sparse(Line(:,1),Line(:,2),-kGij,n,n);          %形成节点电导矩阵的上三角
-G = G+sparse(Line(:,2),Line(:,1),-kGij,n,n);        %下三角(导纳阵对称Gij = Gji)
-G = G+sparse(Line(:,1),Line(:,1),kGij+Ga1,n,n);     %计算G(i,i)
-G = G+sparse(Line(:,2),Line(:,2),kGij+Ga2,n,n);     %计算G(j,j)
+G = G + sparse(Line(:,2),Line(:,1),-kGij,n,n);        %下三角(导纳阵对称Gij = Gji)
+G = G + sparse(Line(:,1),Line(:,1),kGij+Ga1,n,n);     %计算G(i,i)
+G = G + sparse(Line(:,2),Line(:,2),kGij+Ga2,n,n);     %计算G(j,j)
 
 %% 计算电纳矩阵
 B = sparse(Line(:,1),Line(:,2),-kBij,n,n);          %形成节点电纳矩阵的上三角
-B = B+sparse(Line(:,2),Line(:,1),-kBij,n,n);        %下三角(导纳阵对称Bij = Bji)
-B = B+sparse(Line(:,1),Line(:,1),Ba1+kBij+Line(:,5)./2,n,n);%计算B(i,i)
-B = B+sparse(Line(:,2),Line(:,2),Ba2+kBij+Line(:,5)./2,n,n);%计算B(j,j)
+B = B + sparse(Line(:,2),Line(:,1),-kBij,n,n);        %下三角(导纳阵对称Bij = Bji)
+B = B + sparse(Line(:,1),Line(:,1),Ba1+kBij+Line(:,5)./2,n,n);%计算B(i,i)
+B = B + sparse(Line(:,2),Line(:,2),Ba2+kBij+Line(:,5)./2,n,n);%计算B(j,j)
 
 %% 加上节点的对地支路导纳
-G = G+diag(Node(:,5)./SB);
-B = B+diag(Node(:,6)./SB);
+G = G + diag(Node(:,5)./SB);
+B = B + diag(Node(:,6)./SB);
 
 %% 得到导纳矩阵
 Y = G + 1i*B;

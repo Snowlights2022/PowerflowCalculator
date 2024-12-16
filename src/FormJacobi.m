@@ -2,7 +2,9 @@
 % Licensed Under Apache-2.0 License
 % Last updated: 2024/12/15
 
+%% 计算雅可比矩阵
 function [Jb] = FormJacobi(U1,PVnode,Balance,Y,n)
+
         % 计算 H 矩阵
         H = sparse(imag(sparse(diag(U1)) * sparse(diag(conj(Y * U1)))) - ...
                    imag(sparse(diag(U1)) * conj(Y * sparse(diag(U1)))));
