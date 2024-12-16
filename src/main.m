@@ -26,7 +26,7 @@ end
 Prompt = {'允许最大迭代次数:', '目标迭代精度:'};
 DialogTitle = '输入参数';
 DPI = [1 10];
-DefaultInput = {'30', '1e-10'};
+DefaultInput = {'20', '1e-10'};
 Answer = inputdlg(Prompt, DialogTitle, DPI, DefaultInput);
 
 % 将用户输入转换为数值
@@ -42,7 +42,7 @@ tic;%运行计时开始
 [Gij,Bij,kGij,kBij,Ga1,Ga2,Ba1,Ba2,G,B,Y] = FormYmatrix(Line,NodeNumbers,Node,SB);
 
 %% 3.初始化
-PVnode = PVdata(:,1);                                %提取系统的PV节点标号
+PVNode = PVdata(:,1);                                %提取系统的PV节点标号
 gen_node = Gen(:,1);                                 %获取GenData中的PV和平衡节点号
 U0 = ones(NodeNumbers,1);                                      %除了PV和平衡外平启动电压幅值取1
 U0(gen_node) = Gen(:,6);                             %将平衡节点与PV节点的电压赋值
@@ -55,21 +55,21 @@ U1 = U0.*exp(1i.*Angle);
 
 %% 4.计算不平衡量
 for k = 1:k_max
-    [unbalance_P,unbalance_Q,maxunb,unbalance] = CalculateDeltaPQ(Y,U1,Balance,P,Q,PVnode);
-    if maxunb<Tolrance                                                       
+    [P_Unbalance,Q_Unbalance,MaxUnbalance,Unbalance] = CalculateDeltaPQ(Y,U1,Balance,P,Q,PVNode);
+    if MaxUnbalance<Tolrance                                                       
         %判断最大不平衡量是否小于精确度，小于即可结束迭代
        disp('此次计算收敛');
-       disp(['计算的节点数为：',num2str(NodeNumbers),'  个']);
-       disp(['潮流迭代的次数为：',num2str(k),'  次']);
-       disp('最大不平衡量为: ');disp(maxunb)
+       disp(['计算的节点数为：',num2str(NodeNumbers),'个']);
+       disp(['潮流迭代的次数为：',num2str(k),'次']);
+       disp('最大不平衡量为: ');disp(MaxUnbalance)
        break;
     else%否则继续迭代
 
 %% 5.计算和修正雅可比矩阵
-      [Jb] = FormJacobi(U1,PVnode,Balance,Y,NodeNumbers);
+      [Jb] = FormJacobi(U1,PVNode,Balance,Y,NodeNumbers);
 
 %% 6、求解潮流修正量  
-      [U1] = SolveCorrectionEquation(Jb,unbalance,NodeNumbers,U1);
+      [U1] = SolveCorrectionEquation(Jb,Unbalance,NodeNumbers,U1);
     end
 end
 if k>k_max                                                        
@@ -100,3 +100,4 @@ TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
  disp(['计算的节点数为：',num2str(NodeNumbers),'个']);
  disp(['潮流迭代的次数为：',num2str(k),'次']);
  disp(TimeMessage);
+ disp(['最大不平衡量为:',num2str(MaxUnbalance)]);
