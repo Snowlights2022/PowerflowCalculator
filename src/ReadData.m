@@ -27,25 +27,25 @@ b = size(Line,1);                             %支路数b
 %% 把投入运行的发电机所发出的功率加入计算
 if NodeNumber>100
     %逻辑索引算法查找(使用矢量化操作来更新节点的有功功率和无功功率)，2383wp样例0.078285s
-    GeneratorRunningindex = Gen(:,8) > 0;  %筛选出运行中的发电机
+    GeneratorRunningindex = Gen(:,8) > 0;  %筛选出运行中的发电机，第八列大于零即为正在运行
     RunningGenerator = Gen(GeneratorRunningindex, :);  %获取运行中的发电机数据
-    %使用sub2ind函数将二维索引转换为线性索引，从而直接对Node矩阵进行批量更新，避免逐个元素更新
-    Node(sub2ind(size(Node), RunningGenerator(:,1), repmat(3, size(RunningGenerator, 1), 1))) = ... 
-        Node(sub2ind(size(Node), RunningGenerator(:,1), repmat(3, size(RunningGenerator, 1), 1))) - RunningGenerator(:,2);
+    %使用sub2ind函数将二维索引转换为按列优先排序的(单一)线性索引，从而直接对Node进行批量更新，避免逐元素更新
+    Node(sub2ind(size(Node), RunningGenerator(:,1), repmat(3, size(RunningGenerator, 1), 1))) = ... %Node(sub2mid(size(Node),i,j)，i=RunningGenerator，j=repmat(3, size(RunningGenerator, 1), 1)
+        Node(sub2ind(size(Node), RunningGenerator(:,1), repmat(3, size(RunningGenerator, 1), 1))) - RunningGenerator(:,2);%线性索引更新有功功率
 
-    Node(sub2ind(size(Node), RunningGenerator(:,1), repmat(4, size(RunningGenerator, 1), 1))) = ...
+    Node(sub2ind(size(Node), RunningGenerator(:,1), repmat(4, size(RunningGenerator, 1), 1))) = ...%创建一个与RunningGenerator的行数相同的列向量，所有元素为4，表示节点数据矩阵Node的第4列(无功功率)
         Node(sub2ind(size(Node), RunningGenerator(:,1), repmat(4, size(RunningGenerator, 1), 1))) - RunningGenerator(:,3);
 else 
     %节点数较少时使用for循环
     %算法for循环，2383wp样例-0.02s
-    Node=full(Node);
+    Node=full(Node);%提高索引循环速度
     for i=1:g
         if (Gen(i,8)>0)
             Node(Gen(i,1),3) = Node(Gen(i,1),3)-Gen(i,2);
             Node(Gen(i,1),4) = Node(Gen(i,1),4)-Gen(i,3);
         end
     end
-    Node = sparse(Node);%节点矩阵稀疏化
+    Node = sparse(Node);%节点矩阵还原稀疏化
 end
 
 %% 将没有变压器的线路变比由0调整为1(也就是Line矩阵/数组中第九列元素为0时进行调整，替换为1)
