@@ -1,23 +1,17 @@
+% Copyright 2024 ZhongyuXie 
+% Licensed Under Apache-2.0 License
+% Last updated: 2024/12/18
+
 function DeviceInfo()
     % 打开文件
     outputFile = 'DeviceInfo.txt';
     fileID = fopen(outputFile, 'w');
     
     % 获取计算机类型和操作系统
-    [comp, maxsize, endian] = computer;
+    [comp, maxsize] = computer;
     fprintf(fileID, '计算机类型: %s\n', comp);
     fprintf(fileID, '最大数组大小: %d\n', maxsize);
     
-    % 获取操作系统信息
-    if ispc
-        os = 'Windows';
-    elseif ismac
-        os = 'Mac OS';
-    elseif isunix
-        os = 'Unix';
-    else
-        os = 'Unknown';
-    end
     
     % 获取CPU信息
     cpuInfo = feature('numcores');
