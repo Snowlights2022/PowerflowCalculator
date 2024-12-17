@@ -1,6 +1,6 @@
 % Copyright 2024 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/16
+% Last updated: 2024/12/17
 
 %% 修正方程求解
 function [U1] = SolveCorrectionEquation(Jb,Unbalance,NodeNumber,U1)
@@ -16,6 +16,6 @@ U1Angle = angle(U1); % 当前电压的相角
 U0 = U1Magnitude .* (1 - ValueMagnitude);%更新电压幅值
 Angle = U1Angle - ValueAngle;%更新电压相角 
 
- %% 更新节点电压 
+%% 更新节点电压 
 U1 = U0.*exp(1i.*Angle);                    %再将电压写成向量形式，用于雅克比矩阵和线路功率的计算
 

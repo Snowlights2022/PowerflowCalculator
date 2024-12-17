@@ -13,8 +13,8 @@ Node = sparse(mpc.bus);
 
 %% 获取节点数据
 NodeNumber = size(mpc.bus,1);%获取母线数据矩阵的行数，即节点数    
-PVNumber = sum(Node(:, 2) == 2); %PV节点数(计算Node中第2列等于2的元素数量，即PV节点的数量)
-PQNumber = sum(Node(:, 2) == 1); %PQ节点数(计算Node中第2列等于1的元素数量，即PV节点的数量)
+%PVNumber = sum(Node(:, 2) == 2); %PV节点数(计算Node中第2列等于2的元素数量，即PV节点的数量)
+%PQNumber = sum(Node(:, 2) == 1); %PQ节点数(计算Node中第2列等于1的元素数量，即PV节点的数量)
 
 %% 获取支路数据，并建立稀疏矩阵
 Line = sparse(mpc.branch);  
@@ -25,7 +25,7 @@ g = size(Gen,1);                              %发电机数g
 b = size(Line,1);                             %支路数b
 
 %% 把投入运行的发电机所发出的功率加入计算
-if NodeNumber>100
+if NodeNumber>1000
     %逻辑索引算法查找(使用矢量化操作来更新节点的有功功率和无功功率)，2383wp样例0.078285s
     GeneratorRunningindex = Gen(:,8) > 0;  %筛选出运行中的发电机，第八列大于零即为正在运行
     RunningGenerator = Gen(GeneratorRunningindex, :);  %获取运行中的发电机数据
@@ -52,33 +52,35 @@ end
 Line(Line(:, 9) == 0, 9) = 1;
 
 %% 获取平衡节点
-Balance = 1;                           
-for i=1:NodeNumber
-    if (Node(i,2) == 3)
-        Balance = Node(i,1);
-    end
-end
+%Balance = 1;                           
+%for i=1:NodeNumber
+%    if (Node(i,2) == 3)
+%        Balance = Node(i,1);
+%    end
+%end
+Balance = find(Node(:, 2) == 3, 1);
 
 %% 获取PV节点的初始数据矩阵
-PVdata = zeros(PVNumber, size(Node, 2));%初始化PVdata矩阵，预分配大小
-j = 1;                                
-for i=1:NodeNumber
-    if (Node(i,2) == 2)
-        PVdata(j,:) = Node(i,:); 
-        j=j+1;
-    end
-end
-PVdata = sparse(PVdata);
+%PVdata = zeros(PVNumber, size(Node, 2));%初始化PVdata矩阵，预分配大小
+%j = 1;                                
+%for i=1:NodeNumber
+%    if (Node(i,2) == 2)
+%        PVdata(j,:) = Node(i,:); 
+%        j=j+1;
+%   end
+%end
+%PVdata = sparse(PVdata);
+PVdata = sparse(Node(Node(:, 2) == 2, :));
+
 
 %% 获取PQ节点的初始数据矩阵
-PQdata = zeros(PQNumber, size(Node, 2));%初始化PQdata矩阵，预分配大小
-j = 1;                                 
-for i=1:NodeNumber
-    if (Node(i,2) == 1)
-        PQdata(j,:) = Node(i,:); 
-        j=j+1;
-    end
-end
-PQdata = sparse(PQdata);                        
-
-
+%PQdata = zeros(PQNumber, size(Node, 2));%初始化PQdata矩阵，预分配大小
+%j = 1;                                 
+%for i=1:NodeNumber
+%    if (Node(i,2) == 1)
+%        PQdata(j,:) = Node(i,:); 
+%        j=j+1;
+%    end
+%end
+%PQdata = sparse(PQdata);                        
+PQdata = sparse(Node(Node(:, 2) == 1, :));

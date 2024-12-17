@@ -9,7 +9,7 @@ format longG;%设置输出格式，保留更多显示
 %选择数据文件
 [file, path] = uigetfile('*.*', '选择一个数据文件');
 if isequal(file, 0)
-    disp('取消了文件选择');
+    error('取消了文件选择');
 else
     [~, name, ~] = fileparts(file);%获取文件名
 
@@ -37,6 +37,7 @@ MaxIterations = uint32(str2double(Answer{1}));
 Tolrance = str2double(Answer{2});
 
 %% 1.读取数据
+StartTime = datetime('now','Format','yyyy-MM-dd HH:mm:ss');
 tic;%运行计时开始
 [SB,NodeNumbers,Line,Node,Gen,g,b,Balance,PVdata,PQdata] = ReadData(mpc);
 
@@ -87,7 +88,7 @@ end
 %% 8、输出结果
 
  %计算平衡节点、线路功率、线路损耗
- volts=([full(abs(U1)),full(convert2deg(angle(U1)))]);
+ volts=sparse([full(abs(U1)),full(convert2deg(angle(U1)))]);
  slack_power=S_balance;%命名要求
  trans_powers=S_ij;%命名要求
  S_lose = sparse(S_ij + S_ij.');
@@ -95,7 +96,7 @@ end
  UsedTime = toc;%运行计时结束
  TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
 
- %输出
+ %命令行输出
  disp('节点电压幅值                             节点电压角度');disp(volts);
  disp('线路功率(MVA)');disp(trans_powers);
  disp('线路损耗(MVA)');disp(S_lose);
@@ -106,3 +107,24 @@ end
  disp(TimeMessage);
  disp(['最大不平衡量为:',num2str(MaxUnbalance)]);
  disp('平衡节点功率(MVA)');disp(slack_power); 
+  
+ %文件输出
+ outputFile = '计算结果.txt';
+ fileID = fopen(outputFile, 'a');
+
+ fprintf(fileID, ['\n','计算始于',char(StartTime),'\n']);
+ fprintf(fileID, '计算的节点数为：%d 个\n', NodeNumbers);
+ fprintf(fileID, '潮流迭代的次数为：%d 次\n', CurrentIteration);
+ fprintf(fileID, '%s\n', TimeMessage);
+ fprintf(fileID, ['最大不平衡量为: ', num2str(MaxUnbalance), '\n']);
+ fprintf(fileID, '平衡节点功率(MVA):');
+ fprintf(fileID, [num2str(slack_power),'\n']);
+ fprintf(fileID, '节点编号\t节点电压幅值\t节点电压角度\n');
+ U1 = full(U1);
+ for i = 1:NodeNumbers
+    fprintf(fileID, '%d                 %f           %f\n',i, abs(U1(i)), rad2deg(angle(U1(i))));
+ end
+ U1 = sparse(U1);
+
+ fclose(fileID);
+ disp(['计算结果已保存到main.m路径下的文件：', outputFile]);
