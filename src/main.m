@@ -80,8 +80,6 @@ if CurrentIteration> MaxIterations
     disp(['潮流迭代的次数为：',num2str(CurrentIteration),'次']);
 end
 
-UsedTime = toc;%运行计时结束
-TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
 
 %% 7、计算支路功率
  [S_balance,U_ij,S_ij] = CalculateBranchPowers(Y,Balance,U1,SB,Line,kGij,kBij,NodeNumbers,Ga1,Ba1,Ba2,Ga2);
@@ -93,6 +91,9 @@ TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
  slack_power=S_balance;%命名要求
  trans_powers=S_ij;%命名要求
  S_lose = sparse(S_ij + S_ij.');
+
+ UsedTime = toc;%运行计时结束
+ TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
 
  %输出
  disp('节点电压幅值                             节点电压角度');disp(volts);

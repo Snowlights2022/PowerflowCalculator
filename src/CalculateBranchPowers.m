@@ -21,7 +21,8 @@ y_j0 = sparse(Line(:,2),Line(:,1),Ga2+1i.*(Line(:,5)+Ba2), n , n);%对地导纳y
 % 计算 U_ij
 U_diag = diag(U1);%提取U1的对角线元素
 U1_conj = conj(U1);%计算U1的共轭
-U_ij = sparse(U_diag * ones(n, n) - ones(n, n) * U_diag);%计算U_ij
+%U_ij = sparse(U_diag * ones(n, n) - ones(n, n) * U_diag);%计算U_ij，0.0039s
+U_ij = sparse(U1 - U1.');%计算U_ij的第二种算法，最快0.0011s
 
 % 计算 S_ij
 S_ij = (U_diag * conj(y_ij) .* conj(U_ij)) .* SB;%计算S_ij的第一部分
