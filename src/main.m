@@ -1,6 +1,6 @@
 % Copyright 2024 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/17
+% Last updated: 2024/12/18
 
 %% 0.计算参数准备(算例选择)
 clc;clear;
@@ -45,10 +45,10 @@ tic;%运行计时开始
 [Gij,Bij,kGij,kBij,Ga1,Ga2,Ba1,Ba2,G,B,Y] = FormYmatrix(Line,NodeNumbers,Node,SB);
 
 %% 3.初始化
-PVNode = PVdata(:,1);                                          %提取系统的PV节点标号
-GenNode = Gen(:,1);                                           %获取GenData中的PV和平衡节点号
+PVNode = PVdata(:,1);                                          %提取系统的PV节点标号(第一列所有行的元素)
+GenNode = Gen(:,1);                                            %获取GenData中的PV和平衡节点号
 U0 = ones(NodeNumbers,1);                                      %除了PV和平衡外平启动电压幅值取1
-U0(GenNode) = Gen(:,6);                                       %将平衡节点与PV节点的电压赋值
+U0(GenNode) = Gen(:,6);                                        %将平衡节点与PV节点的电压赋值
 Angle = sparse(zeros(NodeNumbers,1));                          %启动电压相角取0
 Angle(Balance,1) = deg2rad(Node(Balance,9));
 P = sparse(PQdata(:,1),1,-PQdata(:,3)/SB,NodeNumbers,1);       %公式P = Pg - Pd
@@ -88,7 +88,7 @@ end
 %% 8、输出结果
 
  %计算平衡节点、线路功率、线路损耗
- volts=sparse([full(abs(U1)),full(convert2deg(angle(U1)))]);
+ volts=sparse([full(abs(U1)),full(rad2deg(angle(U1)))]);
  slack_power=S_balance;%命名要求
  trans_powers=S_ij;%命名要求
  S_lose = sparse(S_ij + S_ij.');
@@ -124,7 +124,7 @@ end
  for i = 1:NodeNumbers
     fprintf(fileID, '%d                 %f           %f\n',i, abs(U1(i)), rad2deg(angle(U1(i))));
  end
- U1 = sparse(U1);
+ U1 = sparse(U1);%还原，可能后续应用
 
  fclose(fileID);
  disp(['计算结果已保存到main.m路径下的文件：', outputFile]);

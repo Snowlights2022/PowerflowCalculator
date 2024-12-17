@@ -1,12 +1,12 @@
 % Copyright 2024 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/17
+% Last updated: 2024/12/18
 
 %% 计算雅可比矩阵
 function [Jb] = FormJacobi(U1,PVnode,Balance,Y,n)
 
         %公共部分计算
-        U1Diag = sparse(diag(U1));                      %计算电压幅值稀疏对角矩阵，对角化使得循环运算只需要一次即可得到全部结果，只需要考虑移位提取数据，不需要循环
+        U1Diag = sparse(diag(U1));                      %计算电压幅值稀疏对角矩阵，对角化使得循环运算只需要一次即可得到全部结果，只需要考虑提取数据，不需要循环
         Y_U1Conj_Diag = sparse(diag(conj(Y * U1)));     %计算Y*U1的共扼稀疏对角矩阵
         Y_U1Diag_Conj = conj(Y * U1Diag);               %计算Y*U1Diag的共轭
 
@@ -52,7 +52,7 @@ function [Jb] = FormJacobi(U1,PVnode,Balance,Y,n)
         L = L+sparse(Balance,Balance,1,n,n);           %L主对角元素不能为0，需要对L的对角线元素进行修改
         L = sparse(L);
      
-%% 形成修正雅克比矩阵
+%% 形成雅克比矩阵
         Jb = [H,N;J,L];                                %形成雅克比矩阵
         Jb = sparse(Jb);                               %形成稀疏雅克比矩阵
         

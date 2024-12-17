@@ -1,10 +1,10 @@
 % Copyright 2024 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/17
+% Last updated: 2024/12/18
 
 function [P_Unbalance,Q_Unbalance,MaxUnbalance,Unbalance] = CalculateDeltaPQ(Y,U1,Balance,P,Q,PVnode)
 
-    S = sparse(diag(U1)*conj(Y*U1));
+    S = sparse(diag(U1)*conj(Y*U1));                %U1 * (Y*U1)共轭 ，UI*
     
     P_Unbalance = P-real(S);                        %取复功率实部计算有功不平衡量
     P_Unbalance(Balance,1) = 0;                     %将平衡节点的有功不平衡量置为零
