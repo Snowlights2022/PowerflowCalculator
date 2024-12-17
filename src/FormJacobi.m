@@ -30,26 +30,26 @@ function [Jb] = FormJacobi(U1,PVnode,Balance,Y,n)
         H(Balance,:) = 0;                              %对H中的平衡节点进行修正，将H中平衡节点对应的行置零 
         H(:,Balance) = 0;                              %对H中的平衡节点进行修正，将H中平衡节点对应的列置零 
         H = sparse(H);
-        H = H+sparse(Balance,Balance,1,n,n);           %H主对角元素不能为0，需要对H的对角线元素进行修改
+        H = H+sparse(Balance,Balance,1,n,n);           %H主对角元素不能为0，置1即可
 %% 修正N  
-        N(:,PVnode) = 0;                               %对N中的pv节点进行修正置零             
+        N(:,PVnode) = 0;                               %对N中的PV节点进行修正置零             
         N(Balance,:) = 0;                              %对N中的平衡节点进行修正，将N中平衡节点对应的行置零                                                                 
         N(:,Balance) = 0;                              %对N中的平衡节点进行修正，将N中平衡节点对应的列置零  
         N = sparse(N);
                
 %% 修正J        
-        J(PVnode,:) = 0;                               %对J中的pv节点进行修正，因为PV节点只有H和N,将L、J置零，但是J的主对角元素不能为0
+        J(PVnode,:) = 0;                               %对J中的PV节点进行修正，因为PV节点只有H和N,将L、J置零，但是J的主对角元素不能为0
         J(Balance,:) = 0;                              %对J中的平衡节点进行修正，将J中平衡节点对应的行置零
         J(:,Balance) = 0;                              %对J中的平衡节点进行修正，将J中平衡节点对应的列置零
         J = sparse(J);
         
 %% 修正L  
-        L(PVnode,:) = 0;                               %对L中的pv节点进行修正，因为PV节点只有H和N,将L、J置零，但是L的主对角元素不能为0
+        L(PVnode,:) = 0;                               %对L中的PV节点进行修正，因为PV节点只有H和N,将L、J置零，但是L的主对角元素不能为0
         L(:,PVnode) = 0;  
         L = L+sparse(PVnode,PVnode,1,n,n);
         L(Balance,:) = 0;                              %对L中的平衡节点进行修正，将L中平衡节点对应的行置零
         L(:,Balance) = 0;                              %对L中的平衡节点进行修正，将L中平衡节点对应的列置零
-        L = L+sparse(Balance,Balance,1,n,n);           %L主对角元素不能为0，需要对L的对角线元素进行修改
+        L = L+sparse(Balance,Balance,1,n,n);           %L主对角元素不能为0，需要对L的对角线元素进行修改（置1）
         L = sparse(L);
      
 %% 形成雅克比矩阵

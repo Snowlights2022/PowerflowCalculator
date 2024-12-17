@@ -17,5 +17,5 @@ U0 = U1Magnitude .* (1 - ValueMagnitude);%更新电压幅值
 Angle = U1Angle - ValueAngle;%更新电压相角 
 
 %% 更新节点电压 
-U1 = U0.*exp(1i.*Angle);                    %再将电压写成向量形式，用于雅克比矩阵和线路功率的计算
+U1 = U0.*exp(1i.*Angle);                    %再将电压写成指数形式，用于雅克比矩阵和线路功率的计算
 
