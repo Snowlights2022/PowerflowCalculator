@@ -1,0 +1,42 @@
+function DeviceInfo()
+    % 打开文件
+    outputFile = 'DeviceInfo.txt';
+    fileID = fopen(outputFile, 'w');
+    
+    % 获取计算机类型和操作系统
+    [comp, maxsize, endian] = computer;
+    fprintf(fileID, '计算机类型: %s\n', comp);
+    fprintf(fileID, '最大数组大小: %d\n', maxsize);
+    
+    % 获取操作系统信息
+    if ispc
+        os = 'Windows';
+    elseif ismac
+        os = 'Mac OS';
+    elseif isunix
+        os = 'Unix';
+    else
+        os = 'Unknown';
+    end
+    
+    % 获取CPU信息
+    cpuInfo = feature('numcores');
+    fprintf(fileID, 'CPU核心数: %d\n', cpuInfo);
+    cpuThreads = feature('numthreads');
+    fprintf(fileID, 'CPU线程数: %d\n', cpuThreads);
+    
+    % 获取GPU信息
+    gpuInfo = gpuDevice;
+    fprintf(fileID, 'GPU名称: %s\n', gpuInfo.Name);
+    fprintf(fileID, 'GPU计算能力: %s\n', gpuInfo.ComputeCapability);
+    fprintf(fileID, 'GPU内存大小: %.4f GiB\n', gpuInfo.TotalMemory / (1024 ^3));
+    
+    % 获取内存信息
+    memoryInfo = memory;
+    fprintf(fileID, '可用内存: %.4f GiB\n', memoryInfo.MemAvailableAllArrays / (1024^3));
+    fprintf(fileID, '最大可用内存: %.4f GiB\n', memoryInfo.MaxPossibleArrayBytes / (1024^3));
+    fprintf(fileID, 'MATLAB使用的内存: %.4f GiB\n', memoryInfo.MemUsedMATLAB / (1024^3));
+    
+    % 关闭文件
+    fclose(fileID);
+end

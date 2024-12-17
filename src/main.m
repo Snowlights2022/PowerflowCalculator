@@ -128,3 +128,4 @@ end
 
  fclose(fileID);
  disp(['计算结果已保存到main.m路径下的文件：', outputFile]);
+ DeviceInfo();
