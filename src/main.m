@@ -2,6 +2,7 @@
 % Licensed Under Apache-2.0 License
 % Last updated: 2024/12/17
 
+function main()
 %% 0.计算参数准备(算例选择)
 clc;clear;
 format longG;%设置输出格式，保留更多显示
