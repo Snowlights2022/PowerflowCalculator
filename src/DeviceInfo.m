@@ -6,12 +6,19 @@ function DeviceInfo()
     % 打开文件
     outputFile = 'DeviceInfo.txt';
     fileID = fopen(outputFile, 'w');
+
+    % 记录时间
+    StartTime = datetime('now','Format','yyyy-MM-dd HH:mm:ss');
+    fprintf(fileID, '设备信息记录时间: %s\n', StartTime);
+
+    % 获取MATLAB版本信息
+    matlabVersion = version;
+    fprintf(fileID, 'MATLAB版本: %s\n', matlabVersion);
     
     % 获取计算机类型和操作系统
     [comp, maxsize] = computer;
     fprintf(fileID, '计算机类型: %s\n', comp);
     fprintf(fileID, '最大数组大小: %d\n', maxsize);
-    
     
     % 获取CPU信息
     cpuInfo = feature('numcores');
