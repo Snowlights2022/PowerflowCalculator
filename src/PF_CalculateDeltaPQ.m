@@ -1,8 +1,8 @@
-% Copyright 2024 ZhongyuXie 
+% Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/18
+% Last updated: 2025/6/8
 
-function [P_Unbalance,Q_Unbalance,MaxUnbalance,Unbalance] = CalculateDeltaPQ(Y,U1,Balance,P,Q,PVnode)
+function [P_Unbalance,Q_Unbalance,MaxUnbalance,Unbalance] = PF_CalculateDeltaPQ(Y,U1,Balance,P,Q,PVnode)
 
     S = sparse(diag(U1)*conj(Y*U1));                %U1 * (Y*U1)共轭 ，UI*
     
