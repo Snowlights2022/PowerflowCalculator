@@ -168,6 +168,7 @@ switch CalculatMode
     %% 2.读取数据
     StartTime = datetime('now','Format','yyyy-MM-dd HH:mm:ss');
     tic;%运行计时开始
+    [X1,X0,Xd2,GeneratorX2,BranchIndex,GeneratorIndex,S,BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData);
 
 end
 
