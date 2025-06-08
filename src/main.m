@@ -17,9 +17,9 @@ while true
                             'ListString', ModeList, ...
                             'Name', '计算模式选择',...
                             'ListSize', [300, 150]);
-    if IsChosed == 0 %如果未选择，弹出警告对话框并继续循环
+    if IsChosed == 0%如果未选择，弹出警告对话框并继续循环
         WaitTime = WaitTime + 1;
-        if WaitTime == 3 %如果等待3次，结束运行
+        if WaitTime == 3%如果等待3次，结束运行
             error('未选择计算模式，程序终止。');
         else
             uiwait(warndlg('未选择计算模式，请重新选择。'));
@@ -41,7 +41,7 @@ switch CalculatMode
     else
         [~, name, ~] = fileparts(file);%获取文件名
         addpath(path);%为调用函数准备路径
-        mpc = feval(name); %调用函数并获取 mpc 结构体
+        mpc = feval(name);%调用函数并获取mpc结构体
         rmpath(path);
         disp(['选择了文件:', fullfile(path, file)]);
         if isfield(mpc,'baseMVA')%检查mpc变量是否包含基本属性
@@ -50,7 +50,7 @@ switch CalculatMode
         error('mpc变量有误，请重新运行以重新选择数据文件');
         end
     end
-    %使用inputdlg 函数创建输入对话框
+    %使用inputdlg创建输入对话框
     Prompt = {'允许最大迭代次数:', '目标迭代精度:'};
     DialogTitle = '输入参数';
     DPI = [1 10];
@@ -145,7 +145,7 @@ switch CalculatMode
     DeviceInfo();%额外输出设备信息
 %% 短路计算
     case 2
-    %% 1.选择数据文件
+    %% 1.选择数据文件与短路具体参数
     Trans_a = -0.5+0.5i*sqrt(3);%相序变换矩阵元素a; 
     Transfrom120ToABC = [1 1 1;Trans_a^2 Trans_a 1;Trans_a Trans_a^2 1];%序转相矩阵
     Uf0 = 1; %近似计算，设故障点电压为1
@@ -161,6 +161,28 @@ switch CalculatMode
         disp(['选择了文件:', fullfile(path, file)]);
         if isfield(ScData,'line')%检查ScData变量是否包含基本属性
             disp('短路计算数据已成功加载');
+            NodeNumbers = max(max(ScData.line(:,3)), max(ScData.line(:,4)));%获取节点数
+            WarnTime = 0;
+            while true
+                %使用inputdlg创建输入对话框
+                Prompt = {'短路节点序号:'};
+                DialogTitle = '输入短路节点';
+                DPI = [1 10];
+                DefaultInput = {'1'};%默认短路节点为1号节点
+                Answer = inputdlg(Prompt, DialogTitle, DPI, DefaultInput);
+                ScNode = str2double(Answer{1});%将输入转换为数值
+                if ScNode > 0 && ScNode <= NodeNumbers %检查输入的短路节点是否有效
+                    disp(['选择的短路节点为:', num2str(ScNode)]);
+                else
+                    WarnTime = WarnTime + 1;
+                    if WarnTime == 3%如果连续三次输入无效，弹出错误对话框并结束运行
+                        error('输入的短路节点无效，程序终止。');
+                    end
+                    uiwait(warndlg('输入的短路节点无效,请重新选择'));
+                    continue;%如果无效，继续循环重新输入
+                end
+                break;
+            end 
         else
             error('短路计算数据有误，请重新运行以重新选择数据文件');
         end
@@ -172,8 +194,13 @@ switch CalculatMode
     %% 3.形成导纳矩阵
     [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
     %% 4.计算短路电流
+    %三相
+    [U_T3,I_T3,U_P3,I_P3] = SC_ThreePhase(Z1,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);
+    %单相
+    [U_T1,I_T1,U_P1,I_P1] = SC_SinglePhase(Z1,Z2,Z0,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);
+    %两相
+    [U_T2,I_T2,U_P2,I_P2] = SC_TwoPhase(Z1,Z2,Z0,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);   
+    %两相短路接地
+    [U_T2G,I_T2G,U_P2G,I_P2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);
+
 end
-
-
-
-     

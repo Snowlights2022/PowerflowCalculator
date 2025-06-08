@@ -3,7 +3,7 @@
 % Last updated: 2025/6/8
 
 function [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2)
-    NodeNumbers = max(max(BranchStartNode), max(BranchEndNode)); % 获取节点数
+    NodeNumbers = max(max(BranchStartNode), max(BranchEndNode));%获取节点数
 %% 计算正序网络
     % 计算每条支路的正序导纳
     Branch_y1 = 1./(X1*1i); 
