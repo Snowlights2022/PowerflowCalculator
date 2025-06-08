@@ -25,7 +25,6 @@ X0 = Line(:,6);                 % 支路零序电抗，取Line矩阵的第6列
 Generator = ScData.gen;         % 从输入结构体ScData中提取发电机参数
 GeneratorIndex = Generator(:,1);% 发电机连接的节点编号，取Generator矩阵的第1列
 Xd2 = Generator(:,2);           % 发电机直轴次暂态电抗，取Generator矩阵的第2列
-GeneratorX2 = Generator(:,3);            % 发电机负序电抗，取Generator矩阵的第3列
+GeneratorX2 = Generator(:,3);   % 发电机负序电抗，取Generator矩阵的第3列
 
 end
-

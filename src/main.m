@@ -162,14 +162,16 @@ switch CalculatMode
         if isfield(ScData,'line')%检查ScData变量是否包含基本属性
             disp('短路计算数据已成功加载');
         else
-        error('短路计算数据有误，请重新运行以重新选择数据文件');
+            error('短路计算数据有误，请重新运行以重新选择数据文件');
         end
     end
     %% 2.读取数据
     StartTime = datetime('now','Format','yyyy-MM-dd HH:mm:ss');
     tic;%运行计时开始
     [X1,X0,Xd2,GeneratorX2,BranchIndex,GeneratorIndex,S,BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData);
-
+    %% 3.形成导纳矩阵
+    [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
+    %% 4.计算短路电流
 end
 
 
