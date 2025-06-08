@@ -1,6 +1,6 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/8
+% Last updated: 2025/6/9
 
 %% 0.计算准备
 clc;clear;
@@ -8,7 +8,7 @@ format longG;%设置输出格式，保留更多显示
 
 outputFile = '计算结果.txt';%输出计算结果到文件
 WaitTime = 0;
-ModeList = {'潮流计算', '短路计算', '基于潮流分布的短路计算'};
+ModeList = {'潮流计算', '近似短路计算', '基于潮流分布的短路计算'};
 %% 选择计算模式与算例
 while true
     %使用listdlg进行模式选择
@@ -79,8 +79,8 @@ switch CalculatMode
     %% 5.计算不平衡量
     for CurrentIteration = 1: MaxIterations
         [P_Unbalance,Q_Unbalance,MaxUnbalance,Unbalance] = PF_CalculateDeltaPQ(Y,U1,Balance,P,Q,PVNode);
-        if MaxUnbalance<Tolrance                                                       
-            %判断最大不平衡量是否小于精确度，小于即可结束迭代
+        if MaxUnbalance<Tolrance
+        %判断最大不平衡量是否小于精确度，小于即可结束迭代
         disp('此次计算收敛');
         disp(['计算的节点数为：',num2str(NodeNumbers),'个']);
         disp(['潮流迭代的次数为：',num2str(CurrentIteration),'次']);
@@ -148,7 +148,7 @@ switch CalculatMode
     %% 1.选择数据文件与短路具体参数
     Trans_a = -0.5+0.5i*sqrt(3);%相序变换矩阵元素a; 
     Transfrom120ToABC = [1 1 1;Trans_a^2 Trans_a 1;Trans_a Trans_a^2 1];%序转相矩阵
-    Uf0 = 1; %近似计算，设故障点电压为1
+    UfBase = 1; %近似计算，设故障点电压为1
 
     [file, path] = uigetfile('*.*', '选择一个数据文件');
     if isequal(file, 0)
@@ -190,17 +190,17 @@ switch CalculatMode
     %% 2.读取数据
     StartTime = datetime('now','Format','yyyy-MM-dd HH:mm:ss');
     tic;%运行计时开始
-    [X1,X0,Xd2,GeneratorX2,BranchIndex,GeneratorIndex,S,BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData);
+    [X1,X0,Xd2,GeneratorX2,BranchNumber,GeneratorIndex,S,BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData);
     %% 3.形成导纳矩阵
     [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
-    %% 4.计算短路电流
+    %% 4.计算短路网络电压电流
     %三相
-    [U_T3,I_T3,U_P3,I_P3] = SC_ThreePhase(Z1,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);
+    [U_T3,I_T3,U_P3,I_P3] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
     %单相
-    [U_T1,I_T1,U_P1,I_P1] = SC_SinglePhase(Z1,Z2,Z0,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);
+    [U_T1,I_T1,U_P1,I_P1] = SC_SinglePhase(Z1,Z2,Z0,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
     %两相
-    [U_T2,I_T2,U_P2,I_P2] = SC_TwoPhase(Z1,Z2,Z0,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);   
+    [U_T2,I_T2,U_P2,I_P2] = SC_TwoPhase(Z1,Z2,Z0,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);   
     %两相短路接地
-    [U_T2G,I_T2G,U_P2G,I_P2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,ScNode,Uf0,Transfrom120ToABC,NodeNumbers,BranchStartNode,BranchEndNode);
-
+    [U_T2G,I_T2G,U_P2G,I_P2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,ScNode,UfBase,Transfrom120ToABC,BranchNumber,NodeNumbers,BranchStartNode,BranchEndNode);
+    toc;%运行计时结束
 end
