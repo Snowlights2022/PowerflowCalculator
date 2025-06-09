@@ -1,9 +1,9 @@
-% Copyright 2024 ZhongyuXie 
+% Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/18
+% Last updated: 2025/6/9
 
 %% 计算雅可比矩阵
-function [Jb] = FormJacobi(U1,PVnode,Balance,Y,n)
+function [Jb] = PF_FormJacobi(U1,PVnode,Balance,Y,n)
 
         %公共部分计算
         U1Diag = sparse(diag(U1));                      %计算电压幅值稀疏对角矩阵，对角化使得循环运算只需要一次即可得到全部结果，只需要考虑提取数据，不需要循环

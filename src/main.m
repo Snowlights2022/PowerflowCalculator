@@ -2,17 +2,17 @@
 % Licensed Under Apache-2.0 License
 % Last updated: 2025/6/9
 
-%% 0.计算准备
+%% 1.计算准备
 clc;clear;
-format longG;%设置输出格式，保留更多显示
+format longG;%设置输出格式，保留输出更多有效数字
 
-outputFile = '计算结果.txt';%输出计算结果到文件
-WaitTime = 0;
-ModeList = {'潮流计算', '近似短路计算', '基于潮流分布的短路计算'};
-%% 选择计算模式与算例
+outputFile = '计算结果.txt';%输出计算结果到指定文件
+ModeList = {'潮流计算', '近似短路计算'};%, '基于潮流分布的短路计算'
+%% 2.选择计算模式与算例
+WaitTime = 0;%计算模式选择计数
 while true
     %使用listdlg进行模式选择
-    [ModeIndex, IsChosed] = listdlg('PromptString', '请选择计算模式：', ...
+    [CalculatMode, IsChosed] = listdlg('PromptString', '请选择计算模式：', ...
                             'SelectionMode', 'single', ...
                             'ListString', ModeList, ...
                             'Name', '计算模式选择',...
@@ -28,9 +28,7 @@ while true
     end
     break;
 end 
-CalculatMode = ModeIndex;
-
-%% 计算选择
+%% 3.计算选择
 switch CalculatMode
 %% 潮流计算
     case 1
@@ -88,19 +86,21 @@ switch CalculatMode
         break;
         else%否则继续迭代
     %% 6.计算和修正雅可比矩阵
-        [Jb] = FormJacobi(U1,PVNode,Balance,Y,NodeNumbers);
+        [Jb] = PF_FormJacobi(U1,PVNode,Balance,Y,NodeNumbers);
     %% 7、求解潮流修正量  
-        [U1] = SolveCorrectionEquation(Jb,Unbalance,NodeNumbers,U1);
+        [U1] = PF_SolveCorrectionEquation(Jb,Unbalance,NodeNumbers,U1);
         end
     end
     if CurrentIteration> MaxIterations                                                        
         %如果迭代次数达到最大迭代次数，则在规定的条件下无法收敛
         disp('此次潮流计算不收敛');
         disp(['潮流迭代的次数为：',num2str(CurrentIteration),'次']);
+        UsedTime = toc;%运行计时结束
+        disp(['运行时长为',num2str(UsedTime),'秒']);
     end
     %% 8.计算数据
     %计算支路功率
-    [S_balance,U_ij,S_ij] = CalculateBranchPowers(Y,Balance,U1,SB,Line,kGij,kBij,NodeNumbers,Ga1,Ba1,Ba2,Ga2);
+    [S_balance,U_ij,S_ij] = PF_CalculateBranchPowers(Y,Balance,U1,SB,Line,kGij,kBij,NodeNumbers,Ga1,Ba1,Ba2,Ga2);
     %计算平衡节点、线路功率、线路损耗
     volts=sparse([full(abs(U1)),full(rad2deg(angle(U1)))]);
     slack_power=S_balance;%命名要求
@@ -138,6 +138,7 @@ switch CalculatMode
                 DialogTitle = '输入短路节点';
                 DPI = [1 10];
                 DefaultInput = {'1'};%默认短路节点为1号节点
+                
                 Answer = inputdlg(Prompt, DialogTitle, DPI, DefaultInput);
                 ScNode = str2double(Answer{1});%将输入转换为数值
                 if ScNode > 0 && ScNode <= NodeNumbers %检查输入的短路节点是否有效
