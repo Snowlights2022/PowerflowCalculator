@@ -161,7 +161,7 @@ switch CalculatMode
     tic;%运行计时开始
     [X1,X0,Xd2,GeneratorX2,BranchNumber,GeneratorIndex,S,BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData);
     %% 3.形成导纳矩阵
-    [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
+    [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYZmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
     %% 4.计算短路网络电压电流
     %三相
     [U_T3,I_T3,U_P3,I_P3] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,BranchNumber,BranchStartNode,BranchEndNode);

@@ -17,7 +17,7 @@ function  PF_Printout(volts,trans_powers,S_lose,U1,slack_power,NodeNumbers,Curre
     
     %文件输出
     fileID = fopen(outputFile, 'a');
-    fprintf(fileID, ['\n','计算类型为潮流计算' , '\n']);
+    fprintf(fileID, ['\n','计算类型为潮流计算']);
     fprintf(fileID, ['\n','计算始于',char(StartTime),'\n']);
     fprintf(fileID, '计算的节点数为：%d 个\n', NodeNumbers);
     fprintf(fileID, '潮流迭代的次数为：%d 次\n', CurrentIteration);
