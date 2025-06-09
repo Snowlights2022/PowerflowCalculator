@@ -1,6 +1,6 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/8
+% Last updated: 2025/6/9
 
 function [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2)
     NodeNumbers = max(max(BranchStartNode), max(BranchEndNode));%获取节点数

@@ -2,7 +2,7 @@
 % Licensed Under Apache-2.0 License
 % Last updated: 2025/6/9
 
-function [U_T,I_T,U_P,I_P] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode)
+function [U_T,I_T,U_P,I_P] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,BranchNumber,BranchStartNode,BranchEndNode)
     %电压序分量U_T=[U1;U2;U0];%每列为一个节点的三序分量
     %电流序分量I_T=[I1;I2;I0];%每列为一个节点的三序分量
     %电压相分量（A特殊相）U_P=[UA;UB;UC];%节点按列排列，每列为一个节点的三相分量，U_P(i, j) 表示第j个节点的第i相（A/B/C）电压
@@ -33,11 +33,11 @@ function [U_T,I_T,U_P,I_P] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,No
 
 %%各节点支路计算
     %电压
-    Z1_Diag = diag(Z1);%提取Z1的对角线元素形成Znf对角矩阵
-    U1 = UfBase*ones(size(Z1_Diag,1),1)- If1 * Z1_Diag;%正序电压=1-Z(节点-短路点)*正序电流
-    U2 = zeros(size(Z1_Diag,1),1);%负序零序均为零
-    U0 = zeros(size(Z1_Diag,1),1);
-    U_T = [U1.'; U2.'; U0.']; %每列为一个节点的三序分量
+    Znf = Z1(ScNode,:);%提取Z1的Znf元素列向量
+    U1 = UfBase*ones(size(Znf,1),1) - If1 * Znf;%正序电压=1-Z(节点-短路点)*正序电流
+    U2 = zeros(1,length(Znf));%负序零序均为零
+    U0 = zeros(1,length(Znf));
+    U_T = [U1; U2; U0]; %每列为一个节点的三序分量
 
     U_P= Transfrom120ToABC * U_T;%将正序、负序、零序电压转换为相分量，每列为一个节点的三相分量
     UA = U_P(1, :); %取行时，第一行为所有节点的A相电压行向量

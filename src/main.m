@@ -98,10 +98,9 @@ switch CalculatMode
         disp('此次潮流计算不收敛');
         disp(['潮流迭代的次数为：',num2str(CurrentIteration),'次']);
     end
-    %% 8.计算支路功率
+    %% 8.计算数据
+    %计算支路功率
     [S_balance,U_ij,S_ij] = CalculateBranchPowers(Y,Balance,U1,SB,Line,kGij,kBij,NodeNumbers,Ga1,Ba1,Ba2,Ga2);
-    %% 9.输出结果
-
     %计算平衡节点、线路功率、线路损耗
     volts=sparse([full(abs(U1)),full(rad2deg(angle(U1)))]);
     slack_power=S_balance;%命名要求
@@ -110,39 +109,9 @@ switch CalculatMode
 
     UsedTime = toc;%运行计时结束
     TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
-
-    %命令行输出
-    disp('节点电压幅值                             节点电压角度');disp(volts);
-    disp('线路功率(MVA)');disp(trans_powers);
-    disp('线路损耗(MVA)');disp(S_lose);
-
-    %此处设置考虑到命令行显示不全，重复输出便于对照
-    disp(['计算的节点数为：',num2str(NodeNumbers),'个']);
-    disp(['潮流迭代的次数为：',num2str(CurrentIteration),'次']);
-    disp(TimeMessage);
-    disp(['最大不平衡量为:',num2str(MaxUnbalance)]);
-    disp('平衡节点功率(MVA)');disp(slack_power); 
     
-    %文件输出
-    fileID = fopen(outputFile, 'a');
-    fprintf(fileID, ['\n','计算类型为潮流计算' , '\n']);
-    fprintf(fileID, ['\n','计算始于',char(StartTime),'\n']);
-    fprintf(fileID, '计算的节点数为：%d 个\n', NodeNumbers);
-    fprintf(fileID, '潮流迭代的次数为：%d 次\n', CurrentIteration);
-    fprintf(fileID, '%s\n', TimeMessage);%计算用时信息
-    fprintf(fileID, ['最大不平衡量为: ', num2str(MaxUnbalance), '\n']);
-    fprintf(fileID, '平衡节点功率(MVA):');
-    fprintf(fileID, [num2str(slack_power),'\n']);
-    fprintf(fileID, '节点编号\t节点电压幅值\t节点电压角度\n');
-    U1 = full(U1);
-    for i = 1:NodeNumbers
-        fprintf(fileID, '%d                 %f           %f\n',i, abs(U1(i)), rad2deg(angle(U1(i))));
-    end
-    %U1 = sparse(U1);%还原，可能后续应用
-
-    fclose(fileID);
-    disp(['计算结果已保存到main.m路径下的文件：', outputFile]);
-    DeviceInfo();%额外输出设备信息
+    %% 9.输出成功计算结果
+    PF_Printout(volts,trans_powers,S_lose,U1,slack_power,NodeNumbers,CurrentIteration,MaxUnbalance,StartTime,TimeMessage,outputFile);
 %% 短路计算
     case 2
     %% 1.选择数据文件与短路具体参数
@@ -195,9 +164,9 @@ switch CalculatMode
     [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
     %% 4.计算短路网络电压电流
     %三相
-    [U_T3,I_T3,U_P3,I_P3] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
+    [U_T3,I_T3,U_P3,I_P3] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,BranchNumber,BranchStartNode,BranchEndNode);
     %单相
-    [U_T1,I_T1,U_P1,I_P1] = SC_SinglePhase(Z1,Z2,Z0,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
+    [U_T1,I_T1,U_P1,I_P1] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
     %两相
     [U_T2,I_T2,U_P2,I_P2] = SC_TwoPhase(Z1,Z2,Z0,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);   
     %两相短路接地
