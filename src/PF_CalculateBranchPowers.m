@@ -1,9 +1,9 @@
-% Copyright 2024 ZhongyuXie 
+% Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/16
+% Last updated: 2025/6/9
 
 %% 计算各支路功率
-function [S_balance,U_ij,S_ij] = CalculateBranchPowers(Y,Balance,U1,SB,Line,kGij,kBij,n,Ga1,Ba1,Ba2,Ga2)
+function [S_balance,U_ij,S_ij] = PF_CalculateBranchPowers(Y,Balance,U1,SB,Line,kGij,kBij,n,Ga1,Ba1,Ba2,Ga2)
 %% 计算平衡节点功率
 Y_balance = Y(Balance,:);                                        %获取系统的平衡节点号
 S_balance = U1(Balance)*conj(Y_balance)*conj(U1)*SB;             %计算平衡节点功率

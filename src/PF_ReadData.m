@@ -1,9 +1,9 @@
-% Copyright 2024 ZhongyuXie 
+% Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/16
+% Last updated: 2025/6/8
 
 %%导入原始数据
-function [SB,NodeNumber,Line,Node,Gen,g,b,Balance,PVdata,PQdata] = ReadData(mpc)
+function [SB,NodeNumber,Line,Node,Gen,g,b,Balance,PVdata,PQdata] = PF_ReadData(mpc)
  
 %% 获取基准功率
 SB=mpc.baseMVA; 

@@ -1,9 +1,9 @@
-% Copyright 2024 ZhongyuXie 
+% Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/17
+% Last updated: 2025/6/9
 
 %% 修正方程求解
-function [U1] = SolveCorrectionEquation(Jb,Unbalance,NodeNumber,U1)
+function [U1] = PF_SolveCorrectionEquation(Jb,Unbalance,NodeNumber,U1)
 %% 求解修正方程
 CorrectionValue = Jb\Unbalance;%求逆矩阵和不平衡量的乘法，得到电压幅值相角的修正矩阵
 

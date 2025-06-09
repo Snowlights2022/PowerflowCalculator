@@ -1,9 +1,9 @@
-% Copyright 2024 ZhongyuXie 
+% Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2024/12/15
+% Last updated: 2025/6/8
 
 %% 形成节点导纳矩阵
-function [Gij,Bij,kGij,kBij,Ga1,Ga2,Ba1,Ba2,G,B,Y] = FormYmatrix(Line,n,Node,SB) 
+function [Gij,Bij,kGij,kBij,Ga1,Ga2,Ba1,Ba2,G,B,Y] = PF_FormYmatrix(Line,n,Node,SB) 
 
 %% 处理传输线路
 %选择Line的第3列表示传输线路的电阻r,x同理
