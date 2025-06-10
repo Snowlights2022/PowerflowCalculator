@@ -1,6 +1,6 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/9
+% Last updated: 2025/6/10
 
 %% 1.计算准备
 clc;clear;
@@ -13,10 +13,10 @@ WaitTime = 0;%计算模式选择计数
 while true
     %使用listdlg进行模式选择
     [CalculatMode, IsChosed] = listdlg('PromptString', '请选择计算模式：', ...
-                            'SelectionMode', 'single', ...
-                            'ListString', ModeList, ...
-                            'Name', '计算模式选择',...
-                            'ListSize', [300, 150]);
+                                        'SelectionMode', 'single', ...
+                                        'ListString', ModeList, ...
+                                        'Name', '计算模式选择',...
+                                        'ListSize', [300, 150]);
     if IsChosed == 0%如果未选择，弹出警告对话框并继续循环
         WaitTime = WaitTime + 1;
         if WaitTime == 3%如果等待3次，结束运行
@@ -71,8 +71,8 @@ switch CalculatMode
     Angle = sparse(zeros(NodeNumbers,1));                          %启动电压相角取0
     Angle(Balance,1) = deg2rad(Node(Balance,9));
     P = sparse(PQdata(:,1),1,-PQdata(:,3)/SB,NodeNumbers,1);       %公式P = Pg - Pd
-    P = P+sparse(PVdata(:,1),1,-PVdata(:,3)/SB,NodeNumbers,1);     %公式Q = Qg -Qd
-    Q = sparse(PQdata(:,1),1,-PQdata(:,4)/SB,NodeNumbers,1);
+    P = P+sparse(PVdata(:,1),1,-PVdata(:,3)/SB,NodeNumbers,1);     
+    Q = sparse(PQdata(:,1),1,-PQdata(:,4)/SB,NodeNumbers,1);       %公式Q = Qg - Qd
     U1 = U0.*exp(1i.*Angle);
     %% 5.计算不平衡量
     for CurrentIteration = 1: MaxIterations
@@ -111,7 +111,10 @@ switch CalculatMode
     TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
     
     %% 9.输出成功计算结果
-    PF_Printout(volts,trans_powers,S_lose,U1,slack_power,NodeNumbers,CurrentIteration,MaxUnbalance,StartTime,TimeMessage,outputFile);
+    PF_Printout(volts,trans_powers,S_lose,U1,slack_power,...
+                NodeNumbers,CurrentIteration,MaxUnbalance,...
+                StartTime,TimeMessage,outputFile);
+    DeviceInfo();%额外输出设备信息
 %% 短路计算
     case 2
     %% 1.选择数据文件与短路具体参数
@@ -160,17 +163,33 @@ switch CalculatMode
     %% 2.读取数据
     StartTime = datetime('now','Format','yyyy-MM-dd HH:mm:ss');
     tic;%运行计时开始
-    [X1,X0,Xd2,GeneratorX2,BranchNumber,GeneratorIndex,S,BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData);
+    [X1,X0,Xd2,GeneratorX2,...
+    BranchNumber,GeneratorIndex,S,...
+    BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData);
     %% 3.形成导纳矩阵
     [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYZmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
     %% 4.计算短路网络电压电流
     %三相
-    [U_T3,I_T3,U_P3,I_P3,ScnodeCon3] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,BranchNumber,BranchStartNode,BranchEndNode);
+    [U_T3,I_T3,U_P3,I_P3,ScnodeCon3] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,...
+                                                    BranchNumber,BranchStartNode,BranchEndNode);
     %单相
-    [U_T1,I_T1,U_P1,I_P1,ScnodeCon1] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
+    [U_T1,I_T1,U_P1,I_P1,ScnodeCon1] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
+                                                    NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
     %两相
-    [U_T2,I_T2,U_P2,I_P2,ScnodeCon2] = SC_TwoPhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);   
+    [U_T2,I_T2,U_P2,I_P2,ScnodeCon2] = SC_TwoPhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
+                                                    NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);   
     %两相短路接地
-    [U_T2G,I_T2G,U_P2G,I_P2G,ScnodeCon2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
-    toc;%运行计时结束
+    [U_T2G,I_T2G,U_P2G,I_P2G,ScnodeCon2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
+                                                    NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
+    %% 5.输出成功计算结果
+    UsedTime = toc;%运行计时结束
+    TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];
+    disp(TimeMessage);
+    SC_Printout(ScNode,U_T3,I_T3,U_P3,I_P3,ScnodeCon3,...
+                U_T1,I_T1,U_P1,I_P1,ScnodeCon1,...
+                U_T2,I_T2,U_P2,I_P2,ScnodeCon2,...
+                U_T2G,I_T2G,U_P2G,I_P2G,ScnodeCon2G,...
+                StartTime,TimeMessage,outputFile);
+    DeviceInfo();%额外输出设备信息
+
 end

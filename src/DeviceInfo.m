@@ -5,11 +5,11 @@
 function DeviceInfo()
     % 打开文件
     outputFile = 'DeviceInfo.txt';
-    fileID = fopen(outputFile, 'w');
+    fileID = fopen(outputFile, 'a');%以追加模式打开文件
 
     % 记录时间
     StartTime = datetime('now','Format','yyyy-MM-dd HH:mm:ss');
-    fprintf(fileID, '设备信息记录时间: %s\n', StartTime);
+    fprintf(fileID, '\n设备信息记录时间: %s\n', StartTime);
 
     % 获取MATLAB版本信息
     matlabVersion = version;
@@ -37,7 +37,7 @@ function DeviceInfo()
     fprintf(fileID, '可用内存: %.4f GiB\n', memoryInfo.MemAvailableAllArrays / (1024^3));
     fprintf(fileID, '最大可用内存: %.4f GiB\n', memoryInfo.MaxPossibleArrayBytes / (1024^3));
     fprintf(fileID, 'MATLAB使用的内存: %.4f GiB\n', memoryInfo.MemUsedMATLAB / (1024^3));
-    
+
     % 关闭文件
     fclose(fileID);
 end

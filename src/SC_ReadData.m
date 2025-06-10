@@ -2,7 +2,9 @@
 % Licensed Under Apache-2.0 License
 % Last updated: 2025/6/9
 
-function [X1,X0,Xd2,GeneratorX2,BranchNumber,GeneratorIndex,S,BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData)
+function [X1,X0,Xd2,GeneratorX2,BranchNumber,...
+        GeneratorIndex,S,...
+        BranchStartNode,BranchEndNode,Line,Generator] = SC_ReadData(ScData)
 % X1,X0,Xd2,GeneratorX2 支路正序电抗、支路零序电抗、发电机直轴次暂态电抗、发电机负序电抗
 % BranchNumber 支路数量
 % GeneratorIndex 发电机连接的节点编号

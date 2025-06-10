@@ -1,8 +1,11 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/9
+% Last updated: 2025/6/11
 
-function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_TwoPhase_Ground(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode)
+function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_TwoPhase_Ground(Z1,Z2,Z0,...
+                                        S,ScNode,UfBase,Transfrom120ToABC,...
+                                        NodeNumbers,BranchNumber,...
+                                        BranchStartNode,BranchEndNode)
     %电压序分量U_T=[U1;U2;U0];
     %电流序分量I_T=[I1;I2;I0];
     %电压相分量（A特殊相）U_P=[UA;UB;UC];

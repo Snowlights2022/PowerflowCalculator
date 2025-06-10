@@ -1,8 +1,10 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/9
+% Last updated: 2025/6/11
 
-function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,BranchNumber,BranchStartNode,BranchEndNode)
+function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_ThreePhase(Z1,ScNode,UfBase,...
+                                                    Transfrom120ToABC,BranchNumber,...
+                                                    BranchStartNode,BranchEndNode)
     %电压序分量U_T=[U1;U2;U0];%每列为一个节点的三序分量
     %电流序分量I_T=[I1;I2;I0];%每列为一个节点的三序分量
     %电压相分量（A特殊相）U_P=[UA;UB;UC];%节点按列排列，每列为一个节点的三相分量，U_P(i, j) 表示第j个节点的第i相（A/B/C）电压
