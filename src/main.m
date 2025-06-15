@@ -119,7 +119,7 @@ switch CalculatMode
     case 2
     %% 1.选择数据文件与短路具体参数
     Trans_a = -0.5+0.5i*sqrt(3);%相序变换矩阵元素a; 
-    Transfrom120ToABC = [1 1 1;Trans_a^2 Trans_a 1;Trans_a Trans_a^2 1];%序转相矩阵
+    Transform120ToABC = [1 1 1;Trans_a^2 Trans_a 1;Trans_a Trans_a^2 1];%序转相矩阵
     UfBase = 1; %近似计算，设故障点电压为1
 
     [file, path] = uigetfile('*.*', '选择一个数据文件');
@@ -170,16 +170,16 @@ switch CalculatMode
     [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYZmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2);
     %% 4.计算短路网络电压电流
     %三相
-    [U_T3,I_T3,U_P3,I_P3,ScnodeCon3] = SC_ThreePhase(Z1,ScNode,UfBase,Transfrom120ToABC,...
+    [U_T3,I_T3,U_P3,I_P3,ScnodeCon3] = SC_ThreePhase(Z1,ScNode,UfBase,Transform120ToABC,...
                                                     BranchNumber,BranchStartNode,BranchEndNode);
     %单相
-    [U_T1,I_T1,U_P1,I_P1,ScnodeCon1] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
+    [U_T1,I_T1,U_P1,I_P1,ScnodeCon1] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,Transform120ToABC,...
                                                     NodeNumbers,BranchStartNode,BranchEndNode);
     %两相
-    [U_T2,I_T2,U_P2,I_P2,ScnodeCon2] = SC_TwoPhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
+    [U_T2,I_T2,U_P2,I_P2,ScnodeCon2] = SC_TwoPhase(Z1,Z2,Z0,S,ScNode,UfBase,Transform120ToABC,...
                                                     NodeNumbers,BranchStartNode,BranchEndNode);   
     %两相短路接地
-    [U_T2G,I_T2G,U_P2G,I_P2G,ScnodeCon2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
+    [U_T2G,I_T2G,U_P2G,I_P2G,ScnodeCon2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,S,ScNode,UfBase,Transform120ToABC,...
                                                     NodeNumbers,BranchStartNode,BranchEndNode);
     %% 5.输出成功计算结果
     UsedTime = toc;%运行计时结束

@@ -3,7 +3,7 @@
 % Last updated: 2025/6/16
 
 function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_TwoPhase_Ground(Z1,Z2,Z0,...
-                                        S,ScNode,UfBase,Transfrom120ToABC,...
+                                        S,ScNode,UfBase,Transform120ToAbc,...
                                         NodeNumbers,BranchStartNode,BranchEndNode)
     %电压序分量U_T=[U1;U2;U0];
     %电流序分量I_T=[I1;I2;I0];
@@ -18,14 +18,14 @@ function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_TwoPhase_Ground(Z1,Z2,Z0,...
     If2 = -If1 * Z0(ScNode,ScNode) * Ymid;%两相短路电流的边界条件
     If0 = -If1 * Z2(ScNode,ScNode) * Ymid;
     If_T = [If1; If2; If0];%将正序、负序、零序电流组合成序分量，三行一列
-    If_P = Transfrom120ToABC * If_T;
+    If_P = Transform120ToAbc * If_T;
 
     %电压
     Uf1 = UfBase - If1 * Z1(ScNode, ScNode);%正序电压
     Uf2 = -If2 * Z2(ScNode, ScNode);
     Uf0 = -If0 * Z0(ScNode, ScNode);
     Uf_T = [Uf1; Uf2; Uf0];%将正序、负序、零序电压组合成序分量，三行一列
-    Uf_P = Transfrom120ToABC * Uf_T;
+    Uf_P = Transform120ToAbc * Uf_T;
 
     ScnodeCon = [If_P Uf_P; If_T Uf_T];%短路节点的电流和电压相分量，6行2列分块
 
@@ -40,7 +40,7 @@ function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_TwoPhase_Ground(Z1,Z2,Z0,...
         U0(k) = -If0 * Z0(k, ScNode);
     end
     U_T = [U1.'; U2.'; U0.'];%每列为一个节点的三序分量
-    U_P = Transfrom120ToABC * U_T;
+    U_P = Transform120ToAbc * U_T;
 
     %电流
     % 矢量化实现
@@ -59,6 +59,6 @@ function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_TwoPhase_Ground(Z1,Z2,Z0,...
     I0 = (U0_start - U0_end) ./ Z0_branch;%零序电流
     I0(S==3) = 0;%对Ynd变压器支路（S==3）零序电流置零
     I_T = [I1.'; I2.'; I0.'];%汇总支路三序电流
-    I_P = Transfrom120ToABC * I_T;
+    I_P = Transform120ToAbc * I_T;
 
 end
