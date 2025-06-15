@@ -1,6 +1,6 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/9
+% Last updated: 2025/6/16
 
 function [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYZmatrix(X1,Line,GeneratorIndex,S,BranchStartNode,BranchEndNode,Xd2,GeneratorX2)
     NodeNumbers = max(max(BranchStartNode), max(BranchEndNode));%获取节点数
@@ -11,8 +11,8 @@ function [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYZmatrix(X1,Line,GeneratorIndex,S,BranchSt
     Y1 = Y1 + sparse(BranchStartNode, BranchStartNode, Branch_y1, NodeNumbers, NodeNumbers) + sparse(BranchEndNode, BranchEndNode, Branch_y1, NodeNumbers, NodeNumbers); % 对角元
     % 计算发电机正序导纳
     Generator_y1 = 1./(Xd2*1i); 
-    Y1 = Y1 + sparse(GeneratorIndex, GeneratorIndex, Generator_y1, NodeNumbers, NodeNumbers); % 将发电机导纳加到对应节点的对角元
-    Z1 = sparse(inv(full(Y1))); % 求正序阻抗矩阵
+    Y1 = Y1 + sparse(GeneratorIndex, GeneratorIndex, Generator_y1, NodeNumbers, NodeNumbers);%将发电机正序导纳加到对应节点的对角元
+    Z1 = Y1 \ speye(NodeNumbers);%稀疏矩阵求逆的推荐方法
 %% 计算负序网络
     % 计算每条支路的负序导纳
     Branch_y2 = Branch_y1; % 认为线路负序导纳与正序导纳相同
@@ -20,8 +20,8 @@ function [Z1,Z2,Z0,Y1,Y2,Y0] = SC_FormYZmatrix(X1,Line,GeneratorIndex,S,BranchSt
     Y2 = Y2 + sparse(BranchStartNode, BranchStartNode, Branch_y2, NodeNumbers, NodeNumbers) + sparse(BranchEndNode, BranchEndNode, Branch_y2, NodeNumbers, NodeNumbers); % 对角元
     % 计算发电机负序导纳
     Generator_y2 = 1./(GeneratorX2*1i); 
-    Y2 = Y2 + sparse(GeneratorIndex, GeneratorIndex, Generator_y2, NodeNumbers, NodeNumbers); % 将发电机负序导纳加到对应节点
-    Z2 = sparse(inv(full(Y2))); % 求负序阻抗矩阵
+    Y2 = Y2 + sparse(GeneratorIndex, GeneratorIndex, Generator_y2, NodeNumbers, NodeNumbers);%将发电机负序导纳加到对应节点的对角元
+    Z2 = Y2 \ speye(NodeNumbers);
 %% 计算零序网络
     % 零序支路分类
     Line0 = Line(S==1, :); % 选取类型为1的支路（零序支路）

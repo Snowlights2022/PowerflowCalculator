@@ -1,8 +1,10 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/9
+% Last updated: 2025/6/16
 
-function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode)
+function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_SinglePhase(Z1,Z2,Z0,...
+                                        S,ScNode,UfBase,Transform120ToABC,...
+                                        NodeNumbers,BranchStartNode,BranchEndNode)
     %电压序分量U_T=[U1;U2;U0];%每列为一个节点的三序分量
     %电流序分量I_T=[I1;I2;I0];%每列为一个节点的三序分量
     %电压相分量（A特殊相）U_P=[UA;UB;UC];%节点按列排列，每列为一个节点的三相分量，U_P(i, j) 表示第j个节点的第i相（A/B/C）电压
@@ -14,18 +16,19 @@ function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,T
     If2 = If1;%单相短路电流的边界条件
     If0 = If1;
     If_T = [If1; If2; If0];%将正序、负序、零序电流组合成序分量，三行一列
-    If_P = Transfrom120ToABC * If_T;
+    If_P = Transform120ToABC * If_T;
 
     %电压
     Uf1 = UfBase - If1 * Z1(ScNode, ScNode);%正序电压
     Uf2 = -If2 * Z2(ScNode, ScNode);
     Uf0 = -If0 * Z0(ScNode, ScNode);
     Uf_T = [Uf1; Uf2; Uf0];%将正序、负序、零序电压组合成序分量，三行一列
-    Uf_P = Transfrom120ToABC * Uf_T;
+    Uf_P = Transform120ToABC * Uf_T;
 
     ScnodeCon = [If_P Uf_P; If_T Uf_T];%短路节点的电流和电压相分量，6行2列分块
 
 %%各节点支路计算
+    %parafor效率不足，舍去
     %电压
     U1 = zeros(NodeNumbers, 1);
     U2 = zeros(NodeNumbers, 1);
@@ -35,29 +38,26 @@ function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,T
         U2(k) = -If2 * Z2(k, ScNode);         % 负序
         U0(k) = -If0 * Z0(k, ScNode);         % 零序
     end
-    U_T = [U1.'; U2.'; U0.'];%每列为一个节点的三序分量
-    U_P = Transfrom120ToABC * U_T;
+    U_T = [U1.'; U2.'; U0.']; % 3×N，每列为一个节点的三序分量
+    U_P = Transform120ToABC * U_T; % 节点三相电压
 
     %电流
-    I_T = zeros(3, BranchNumber);%每列为一条支路的三序分量
-    for i = 1:BranchNumber
-        StartNode = BranchStartNode(i);%起始节点
-        EndNode = BranchEndNode(i);%终止节点
-        Z1_Branch = Z1(StartNode, EndNode);%支路阻抗
-        Z2_Branch = Z2(StartNode, EndNode);
-        Z0_Branch = Z0(StartNode, EndNode);
-        
-        I1 = (U1(StartNode) - U1(EndNode)) / Z1_Branch;%正序电流
-        I2 = (U2(StartNode) - U2(EndNode)) / Z2_Branch;%负序电流
-        I0 = (U0(StartNode) - U0(EndNode)) / Z0_Branch;%零序电流
-        
-        I_T(:, i) = [I1; I2; I0]; %存入第i列
-    end
-    for i=1:BranchNumber
-        if S(i) == 3%Ynd变压器认为一定是BranchStartNode接Yn，BranchEndNode接d，据此修正Ynd变压器零序电流
-            I_T(3,i)=0;%零序电流不流通
-        end
-    end
-    I_P = Transfrom120ToABC * I_T;%将正序、负序、零序电流转换为相分量
+    % 矢量化实现
+    % 取出每条支路的起止节点电压
+    U1_start = U1(BranchStartNode);%支路起点正序电压列向量
+    U1_end = U1(BranchEndNode);%支路终点正序电压列向量
+    U2_start = U2(BranchStartNode); U2_end = U2(BranchEndNode);
+    U0_start = U0(BranchStartNode); U0_end = U0(BranchEndNode);
+    %使用sub2ind函数将二维索引转换为按列优先排序的(单一)线性索引，从而直接进行批量更新
+    Z1_branch = Z1(sub2ind(size(Z1), BranchStartNode, BranchEndNode));
+    Z2_branch = Z2(sub2ind(size(Z2), BranchStartNode, BranchEndNode));
+    Z0_branch = Z0(sub2ind(size(Z0), BranchStartNode, BranchEndNode));
+    %计算每条支路的三序电流
+    I1 = (U1_start - U1_end) ./ Z1_branch;%正序电流
+    I2 = (U2_start - U2_end) ./ Z2_branch;%负序电流
+    I0 = (U0_start - U0_end) ./ Z0_branch;%零序电流
+    I0(S==3) = 0;%对Ynd变压器支路（S==3）零序电流置零
+    I_T = [I1.'; I2.'; I0.'];%汇总支路三序电流
+    I_P = Transform120ToABC * I_T;
 
 end
