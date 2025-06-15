@@ -1,6 +1,6 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/10
+% Last updated: 2025/6/16
 
 %% 1.计算准备
 clc;clear;
@@ -174,13 +174,13 @@ switch CalculatMode
                                                     BranchNumber,BranchStartNode,BranchEndNode);
     %单相
     [U_T1,I_T1,U_P1,I_P1,ScnodeCon1] = SC_SinglePhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
-                                                    NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
+                                                    NodeNumbers,BranchStartNode,BranchEndNode);
     %两相
     [U_T2,I_T2,U_P2,I_P2,ScnodeCon2] = SC_TwoPhase(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
-                                                    NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);   
+                                                    NodeNumbers,BranchStartNode,BranchEndNode);   
     %两相短路接地
     [U_T2G,I_T2G,U_P2G,I_P2G,ScnodeCon2G] = SC_TwoPhase_Ground(Z1,Z2,Z0,S,ScNode,UfBase,Transfrom120ToABC,...
-                                                    NodeNumbers,BranchNumber,BranchStartNode,BranchEndNode);
+                                                    NodeNumbers,BranchStartNode,BranchEndNode);
     %% 5.输出成功计算结果
     UsedTime = toc;%运行计时结束
     TimeMessage = ['运行时长为',num2str(UsedTime),'秒'];

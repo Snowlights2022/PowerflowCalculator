@@ -1,6 +1,6 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/11
+% Last updated: 2025/6/16
 
 function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_ThreePhase(Z1,ScNode,UfBase,...
                                                     Transfrom120ToABC,BranchNumber,...
@@ -31,8 +31,8 @@ function [U_T,I_T,U_P,I_P,ScnodeCon] = SC_ThreePhase(Z1,ScNode,UfBase,...
     %电压
     Znf = Z1(ScNode,:);%提取Z1的Znf元素列向量
     U1 = UfBase*ones(size(Znf,1),1) - If1 * Znf;%正序电压=1-Z(节点-短路点)*正序电流，结果是
-    U2 = zeros(1,length(Znf));%负序零序均为零
-    U0 = zeros(1,length(Znf));
+    U2 = zeros(size(U1));%负序零序均为零
+    U0 = zeros(size(U1));
     U_T = [U1; U2; U0]; %每列为一个节点的三序分量
 
     U_P= Transfrom120ToABC * U_T;%将正序、负序、零序电压转换为相分量，每列为一个节点的三相分量
