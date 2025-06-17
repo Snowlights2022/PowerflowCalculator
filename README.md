@@ -68,6 +68,7 @@ main.m
 
 1. 本项目的基本框架和计算函数是作者本科时参照`电力系统稳态分析（第四版） 陈珩编` `ISBN:978-7-5123-8172-8-01`教学内容，按照School of Electronical Engineering ,Guangxi University要求完成的简单电力系统计算程序。潮流部分虽然经过[case4gs](PowerflowData/case4gs.m),[case5](PowerflowData/case5.m),[case30](PowerflowData/case30.m),[case118](PowerflowData/case118.m),[case2383wp](PowerflowData/case2383wp.m),[case9241](PowerflowData/case9241pegase.m)与[case13659](PowerflowData/case13659pegase.m)的验证并在1e-12左右的精度取得与参考结果相近的结果，但是作者无法保证计算结果的准确性，不对计算结果的准确性负责。短路部分存在较大的局限，详情请参考标记有**SC_**前缀的各个函数文件与注释。请在使用本程序前仔细阅读[许可证](LICENSE)。
 2. 受限于作者能力水平，[PowerflowData](PowerflowData)中存在相当的用例无法执行潮流计算。
+
 ## 计算输入数据结构
 
 1. 潮流部分
