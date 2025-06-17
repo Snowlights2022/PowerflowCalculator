@@ -1,6 +1,6 @@
 % Copyright 2025 ZhongyuXie 
 % Licensed Under Apache-2.0 License
-% Last updated: 2025/6/9
+% Last updated: 2025/6/17
 
 function  SC_Printout(ScNode,U_T3,I_T3,U_P3,I_P3,ScnodeCon3,...
                     U_T1,I_T1,U_P1,I_P1,ScnodeCon1,...
