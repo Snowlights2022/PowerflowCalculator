@@ -16,6 +16,7 @@
       - `PF_CalculateDeltaPQ.m`：计算潮流计算用不平衡量
       - `PF_SolveCorrectionEquation`：计算潮流计算用雅可比矩阵修正量
       - `PF_CalculateBranchPowers`：计算潮流各类功率
+      - `PF_Printout.m`：输出潮流计算结果
       - `计算结果.txt`：计算结果文件 _(默认位置)_
       - `DeviceInfo.txt`：设备信息文件 _(默认位置)_
       - `SC_ReadData.m`：读取短路数据
@@ -24,6 +25,7 @@
       - `SC_TwoPhase.m`：两相短路计算
       - `SC_TwoPhase_Ground.m`：两相接地短路计算
       - `SC_ThreePhase.m`：三相短路计算
+      - `SC_Printout.m`：输出短路计算结果
    - `PowerflowData`：潮流数据文件夹
    - `ShortCircuitData`：短路数据文件夹
    - `LICENSE` : 许可证文件

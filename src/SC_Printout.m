@@ -9,7 +9,7 @@ function  SC_Printout(ScNode,U_T3,I_T3,U_P3,I_P3,ScnodeCon3,...
                     StartTime,TimeMessage,outputFile)
 
     NodeNumbers = size(U_T3, 2);%%size(A,2)返回A的列数，刚好是需要的节点数量
-    BranchNumbers = size(ScnodeCon3, 1);%%短路网络的支路数
+    BranchNumbers = size(I_T3, 2);%%短路网络的支路数
     %将稀疏矩阵转换为全矩阵(错误使用 fprintf ,函数没有定义为支持稀疏输入。)
     U_T3 = full(U_T3);I_T3 = full(I_T3);U_P3 = full(U_P3);I_P3 = full(I_P3);
     U_T1 = full(U_T1);I_T1 = full(I_T1);U_P1 = full(U_P1);I_P1 = full(I_P1);
