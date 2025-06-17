@@ -4,11 +4,6 @@
 
 %% 修正方程求解
 function [U1] = PF_SolveCorrectionEquation(Jb, Unbalance, NodeNumber, U1)
-
-%% 将数据传输到 GPU
-JbGPU = gpuArray(Jb); % 将雅克比矩阵转换为GPU数组
-UnbalanceGPU = gpuArray(full(Unbalance)); % 将不平衡量转换为全向量并传输到GPU
-       
 %% 求解修正方程
 CorrectionValue = Jb\Unbalance;%求逆矩阵和不平衡量的乘法，得到电压幅值相角的修正矩阵
 
